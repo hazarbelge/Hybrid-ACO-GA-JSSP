@@ -42,6 +42,12 @@ void AntColonyOptimization::optimize(const std::vector<int>& init_schedule) {
             best_ant_.schedule = init_schedule;
             best_ant_.make_span = calculate_make_span(best_ant_.schedule);
             elitist_ant_ = best_ant_;
+
+            for (size_t i = 0; i < best_ant_.schedule.size() - 1; ++i) {
+                int from_job = best_ant_.schedule[i];
+                int to_job = best_ant_.schedule[i + 1];
+                pheromone_matrix_[from_job][to_job] += 1.0 / best_ant_.make_span;
+            }
         }
 
         if (++num_stagnant_iterations_ >= stagnation_threshold_) {
@@ -61,7 +67,6 @@ void AntColonyOptimization::optimize(const std::vector<int>& init_schedule) {
         }
         std::cout << std::endl;
         */
-
     }
     auto end = std::chrono::high_resolution_clock::now();
     run_time_ = (double) std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();

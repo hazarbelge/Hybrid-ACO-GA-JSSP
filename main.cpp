@@ -7,12 +7,12 @@
 #include <iostream>
 
 //TEST
-int NUM_RUNS = 10;
-bool IS_CUSTOM_MATRIX_FOR_TEST = false; //20x5
+int NUM_RUNS = 20;
+bool IS_CUSTOM_MATRIX_FOR_TEST = true; //20x5
 
 //COMMON
-int NUM_JOBS = 40;
-int NUM_MACHINES = 8;
+int NUM_JOBS = 20;
+int NUM_MACHINES = 5;
 
 //ACO
 int NUM_ANTS = 10;
@@ -22,7 +22,7 @@ double BETA = 2.0;
 double EVAPORATION_RATE = 0.1;
 
 //ACO OPTIMIZATION
-int STAGNATION_THRESHOLD = 30;
+int STAGNATION_THRESHOLD = 100;
 double PHEROMONE_RESET_VALUE = 0.5;
 
 //GA
