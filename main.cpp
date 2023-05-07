@@ -5,6 +5,7 @@
 #include "ant_colony_optimization.h"
 #include "genetic_algorithm.h"
 #include <iostream>
+#include <fstream>
 
 //TEST
 int NUM_RUNS = 20;
@@ -31,6 +32,7 @@ int MAX_GENERATIONS = 100;
 double CROSSOVER_RATE = 0.9;
 double MUTATION_RATE = 0.2;
 
+void write_results_to_file(double avg_run_time, double avg_initial_makeSpan, double avg_best_makeSpan, const std::vector<int>& best_schedule, const std::vector<std::vector<AntColonyOptimization::Job>> &jobs);
 void print_results(double run_time, const std::vector<int> &initial_schedule, int initial_makeSpan,
                    const std::vector<int> &best_schedule, int best_makeSpan);
 
@@ -64,10 +66,16 @@ int main() {
         std::tuple<double, int, int, std::vector<int>> aco_tuple = run_ant_colony_optimization(jobs_aco,
                                                                                                std::get<3>(ga_tuple));
 
+        double run_time = std::get<0>(aco_tuple);
+        int initial_makeSpan = std::get<1>(aco_tuple);
+        int best_makeSpan = std::get<2>(aco_tuple);
+        std::vector<int> best_schedule = std::get<3>(aco_tuple);
 
-        total_run_time += std::get<0>(aco_tuple);
-        total_initial_make_span += std::get<1>(aco_tuple);
-        total_best_make_span += std::get<2>(aco_tuple);
+        write_results_to_file(run_time, initial_makeSpan, best_makeSpan, best_schedule, jobs_aco);
+
+        total_run_time += run_time;
+        total_initial_make_span += initial_makeSpan;
+        total_best_make_span += best_makeSpan;
     }
 
     double avg_run_time = total_run_time / NUM_RUNS;
@@ -225,5 +233,31 @@ void print_avg_results(double avg_run_time, double avg_initial_makeSpan, double 
     std::cout << "Average Improvement: "
               << (double) (avg_initial_makeSpan - avg_best_makeSpan) / avg_initial_makeSpan * 100 << "%" << std::endl;
     std::cout << "Average Run Time: " << avg_run_time / 1000.0 << " seconds" << std::endl;
+}
+
+void write_results_to_file(double avg_run_time, double avg_initial_makeSpan, double avg_best_makeSpan, const std::vector<int>& best_schedule, const std::vector<std::vector<AntColonyOptimization::Job>> &jobs) {
+    std::ofstream results_file;
+    results_file.open("../results.txt", std::ios::app);
+    results_file << "NUM_JOBS:" << NUM_JOBS;
+    results_file << ",NUM_MACHINES:" << NUM_MACHINES;
+    results_file << ",AVG_RUN_TIME:" << avg_run_time;
+    results_file << ",AVG_I NITIAL_MAKE_SPAN:" << avg_initial_makeSpan;
+    results_file << ",AVG_BEST_MAKE_SPAN:" << avg_best_makeSpan;
+    results_file << ",SCHEDULE:[";
+    for (const auto &job: best_schedule) {
+        results_file << job << ",";
+    }
+    results_file.seekp(-1, std::ios_base::end);
+    results_file << "],JOBS:";
+    for (const auto &job: jobs) {
+        for (const auto &task: job) {
+            results_file << "(";
+            results_file << task.machine << ":" << task.duration;
+            results_file << ")";
+        }
+        results_file << ",";
+    }
+    results_file << std::endl;
+    results_file.close();
 }
 

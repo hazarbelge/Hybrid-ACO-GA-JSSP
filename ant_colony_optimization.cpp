@@ -39,14 +39,15 @@ void AntColonyOptimization::optimize(const std::vector<int>& init_schedule) {
 
         if (iter == 0) {
             initial_ant_ = best_ant_;
+
             best_ant_.schedule = init_schedule;
-            best_ant_.make_span = calculate_make_span(best_ant_.schedule);
+            best_ant_.make_span = calculate_make_span(init_schedule);
             elitist_ant_ = best_ant_;
 
-            for (size_t i = 0; i < best_ant_.schedule.size() - 1; ++i) {
-                int from_job = best_ant_.schedule[i];
-                int to_job = best_ant_.schedule[i + 1];
-                pheromone_matrix_[from_job][to_job] += 1.0 / best_ant_.make_span;
+            for (size_t i = 0; i < init_schedule.size() - 1; ++i) {
+                int from_job = init_schedule[i];
+                int to_job = init_schedule[i + 1];
+                pheromone_matrix_[from_job][to_job] += 1.0 / calculate_make_span(init_schedule);
             }
         }
 
