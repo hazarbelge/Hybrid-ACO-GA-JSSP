@@ -24,6 +24,16 @@ void AntColonyOptimization::initialize_pheromone_matrix() {
 }
 
 void AntColonyOptimization::optimize(const std::vector<int>& init_schedule) {
+    auto is_init_schedule_empty = init_schedule.empty();
+
+    if(!is_init_schedule_empty) {
+        for (size_t i = 0; i < init_schedule.size() - 1; ++i) {
+            int from_job = init_schedule[i];
+            int to_job = init_schedule[i + 1];
+            pheromone_matrix_[from_job][to_job] += 1.0 / calculate_make_span(init_schedule);
+        }
+    }
+
     auto start = std::chrono::high_resolution_clock::now();
     for (int iter = 0; iter < max_iterations_; ++iter) {
         construct_solutions();
@@ -40,16 +50,10 @@ void AntColonyOptimization::optimize(const std::vector<int>& init_schedule) {
         if (iter == 0) {
             initial_ant_ = best_ant_;
 
-            if(!init_schedule.empty()) {
+            if(!is_init_schedule_empty) {
                 best_ant_.schedule = init_schedule;
                 best_ant_.make_span = calculate_make_span(init_schedule);
                 elitist_ant_ = best_ant_;
-
-                for (size_t i = 0; i < init_schedule.size() - 1; ++i) {
-                    int from_job = init_schedule[i];
-                    int to_job = init_schedule[i + 1];
-                    pheromone_matrix_[from_job][to_job] += 1.0 / calculate_make_span(init_schedule);
-                }
             }
         }
 

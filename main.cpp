@@ -8,7 +8,7 @@
 #include <fstream>
 
 //TEST
-bool HYBRID_GA_ACO_ENABLED = true;
+bool HYBRID_GA_ACO_ENABLED = false;
 int NUM_RUNS = 50;
 bool IS_CUSTOM_MATRIX_FOR_TEST = true; //20x5
 
