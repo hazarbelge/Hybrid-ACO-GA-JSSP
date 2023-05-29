@@ -8,6 +8,7 @@
 #include <fstream>
 
 //TEST
+bool MERGE_GA_ACO = true;
 int NUM_RUNS = 20;
 bool IS_CUSTOM_MATRIX_FOR_TEST = true; //20x5
 
@@ -16,7 +17,7 @@ int NUM_JOBS = 20;
 int NUM_MACHINES = 5;
 
 //ACO
-int NUM_ANTS = 10;
+int NUM_ANTS = 5;
 int MAX_ITERATIONS = 100;
 double ALPHA = 1.0;
 double BETA = 2.0;
@@ -27,10 +28,10 @@ int STAGNATION_THRESHOLD = 100;
 double PHEROMONE_RESET_VALUE = 0.5;
 
 //GA
-int POPULATION_SIZE = 10;
-int MAX_GENERATIONS = 100;
+int POPULATION_SIZE = 20;
+int MAX_GENERATIONS = 200;
 double CROSSOVER_RATE = 0.9;
-double MUTATION_RATE = 0.2;
+double MUTATION_RATE = 0.3;
 
 void write_results_to_file(double avg_run_time, double avg_initial_makeSpan, double avg_best_makeSpan, const std::vector<int>& best_schedule, const std::vector<std::vector<AntColonyOptimization::Job>> &jobs);
 void print_results(double run_time, const std::vector<int> &initial_schedule, int initial_makeSpan,
@@ -62,7 +63,13 @@ int main() {
                                                                                                       NUM_MACHINES);
         std::vector<std::vector<GeneticAlgorithm::Job>> jobs_ga = generate_jobs_matrix_list_ga(jobs_aco);
 
-        std::tuple<double, int, int, std::vector<int>> ga_tuple = run_genetic_algorithm(jobs_ga);
+        std::tuple<double, int, int, std::vector<int>> ga_tuple;
+        if (MERGE_GA_ACO){
+            ga_tuple = run_genetic_algorithm(jobs_ga);
+        }
+        else{
+            ga_tuple = std::make_tuple(0, 0, 0, std::vector<int>());
+        }
         std::tuple<double, int, int, std::vector<int>> aco_tuple = run_ant_colony_optimization(jobs_aco,
                                                                                                std::get<3>(ga_tuple));
 
@@ -241,7 +248,7 @@ void write_results_to_file(double avg_run_time, double avg_initial_makeSpan, dou
     results_file << "NUM_JOBS:" << NUM_JOBS;
     results_file << ",NUM_MACHINES:" << NUM_MACHINES;
     results_file << ",AVG_RUN_TIME:" << avg_run_time;
-    results_file << ",AVG_I NITIAL_MAKE_SPAN:" << avg_initial_makeSpan;
+    results_file << ",AVG_INITIAL_MAKE_SPAN:" << avg_initial_makeSpan;
     results_file << ",AVG_BEST_MAKE_SPAN:" << avg_best_makeSpan;
     results_file << ",SCHEDULE:[";
     for (const auto &job: best_schedule) {
