@@ -8,8 +8,8 @@
 #include <fstream>
 
 //TEST
-bool MERGE_GA_ACO = true;
-int NUM_RUNS = 20;
+bool HYBRID_GA_ACO_ENABLED = true;
+int NUM_RUNS = 50;
 bool IS_CUSTOM_MATRIX_FOR_TEST = true; //20x5
 
 //COMMON
@@ -17,7 +17,7 @@ int NUM_JOBS = 20;
 int NUM_MACHINES = 5;
 
 //ACO
-int NUM_ANTS = 5;
+int NUM_ANTS = 4;
 int MAX_ITERATIONS = 100;
 double ALPHA = 1.0;
 double BETA = 2.0;
@@ -28,10 +28,10 @@ int STAGNATION_THRESHOLD = 100;
 double PHEROMONE_RESET_VALUE = 0.5;
 
 //GA
-int POPULATION_SIZE = 20;
+int POPULATION_SIZE = 50;
 int MAX_GENERATIONS = 200;
 double CROSSOVER_RATE = 0.9;
-double MUTATION_RATE = 0.3;
+double MUTATION_RATE = 0.2;
 
 void write_results_to_file(double avg_run_time, double avg_initial_makeSpan, double avg_best_makeSpan, const std::vector<int>& best_schedule, const std::vector<std::vector<AntColonyOptimization::Job>> &jobs);
 void print_results(double run_time, const std::vector<int> &initial_schedule, int initial_makeSpan,
@@ -64,7 +64,7 @@ int main() {
         std::vector<std::vector<GeneticAlgorithm::Job>> jobs_ga = generate_jobs_matrix_list_ga(jobs_aco);
 
         std::tuple<double, int, int, std::vector<int>> ga_tuple;
-        if (MERGE_GA_ACO){
+        if (HYBRID_GA_ACO_ENABLED){
             ga_tuple = run_genetic_algorithm(jobs_ga);
         }
         else{

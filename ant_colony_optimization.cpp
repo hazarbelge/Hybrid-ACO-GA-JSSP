@@ -40,7 +40,7 @@ void AntColonyOptimization::optimize(const std::vector<int>& init_schedule) {
         if (iter == 0) {
             initial_ant_ = best_ant_;
 
-            if(init_schedule.size() == num_jobs_) {
+            if(!init_schedule.empty()) {
                 best_ant_.schedule = init_schedule;
                 best_ant_.make_span = calculate_make_span(init_schedule);
                 elitist_ant_ = best_ant_;
